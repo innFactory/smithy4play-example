@@ -1,0 +1,6 @@
+
+->      /                        de.innfactory.smithy4play.AutoRouter
+
+
+GET     /           de.BA.preview.controller.PreviewPlay.index
+GET     /index           de.BA.preview.controller.PreviewPlay.index2
