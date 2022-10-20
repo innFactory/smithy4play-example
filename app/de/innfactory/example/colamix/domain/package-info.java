@@ -1,0 +1,1 @@
+package de.innfactory.example.colamix.domain;
