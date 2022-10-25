@@ -7,7 +7,7 @@ use smithy4s.api#simpleRestJson
 @simpleRestJson
 service ColaMixAPIService {
     version: "1.0.0",
-    operations: [BuyCola, HaggleAskingPrice, GetColaAmount, DeliverCola]
+    operations: [BuyCola GetColaMixInfo DeliverCola]
 }
 
 
@@ -16,33 +16,33 @@ operation BuyCola {
     input := {
         @required
         amount: Integer
+        @required
+        bankAccountName: String
     }
     output := {
         @required
+        oldBankBalance: Double
+        @required
         price: Double
+        @required
+        newBankBalance: Double
         @required
         storage: Integer
     }
 }
 
-@http(method: "POST", uri: "/haggle", code: 200)
-operation HaggleAskingPrice {
-    input: HaggleAskingPriceRequest
-    output := {
-        price: Double
-        message: String
-    }
-}
-
 @readonly
 @http(method: "GET", uri: "/storage", code: 201)
-operation GetColaAmount {
+operation GetColaMixInfo {
     output := {
         @required
         amount: Integer
+        @required
+        price: Double
     }
 }
 
+@auth([])
 @http(method: "POST", uri: "/storage", code: 201)
 operation DeliverCola {
     input := {
@@ -53,14 +53,6 @@ operation DeliverCola {
         @required
         newStorage: Integer
     }
-}
-
-
-structure HaggleAskingPriceRequest {
-    @required
-    price: Double
-    @required
-    name: String
 }
 
 

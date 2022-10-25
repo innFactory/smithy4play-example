@@ -24,6 +24,8 @@ class BaseController(implicit ec: ExecutionContext, app: Application)
 
              override def additionalInfoErrorCode: Option[String] = result.additionalInfoErrorCode
 
+             override def additionalInformation: Option[String] = None
+
              override def statusCode: Int = result.statusCode
            }
        }
@@ -34,6 +36,7 @@ class BaseController(implicit ec: ExecutionContext, app: Application)
 
      override def AuthAction: Kleisli[ApplicationRouteResult, ContextWithHeaders, ContextWithHeaders] = Kleisli {
        context =>
+         println(context.httpHeaders.rc)
          EitherT.leftT[Future,ContextWithHeaders](Forbidden())
      }
 

@@ -4,6 +4,7 @@ ThisBuild / scalaVersion := "2.13.10"
 
 lazy val root = (project in file("."))
   .enablePlugins(Smithy4sCodegenPlugin, PlayScala)
+  .aggregate(api)
   .dependsOn(api)
   .settings(
     scalaVersion := Dependencies.scalaVersion,

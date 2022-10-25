@@ -13,16 +13,14 @@ import smithy4s.Service
 trait ColaMixAPIServiceGen[F[_, _, _, _, _]] {
   self =>
 
-  def buyCola(amount: Int) : F[BuyColaInput, Nothing, BuyColaOutput, Nothing, Nothing]
-  def haggleAskingPrice(price: Double, name: String) : F[HaggleAskingPriceRequest, Nothing, HaggleAskingPriceOutput, Nothing, Nothing]
-  def getColaAmount() : F[Unit, Nothing, GetColaAmountOutput, Nothing, Nothing]
+  def buyCola(amount: Int, bankAccountName: String) : F[BuyColaInput, Nothing, BuyColaOutput, Nothing, Nothing]
+  def getColaMixInfo() : F[Unit, Nothing, GetColaMixInfoOutput, Nothing, Nothing]
   def deliverCola(amount: Int) : F[DeliverColaInput, Nothing, DeliverColaOutput, Nothing, Nothing]
 
   def transform[G[_, _, _, _, _]](transformation : Transformation[F, G]) : ColaMixAPIServiceGen[G] = new Transformed(transformation)
   class Transformed[G[_, _, _, _, _]](transformation : Transformation[F, G]) extends ColaMixAPIServiceGen[G] {
-    def buyCola(amount: Int) = transformation[BuyColaInput, Nothing, BuyColaOutput, Nothing, Nothing](self.buyCola(amount))
-    def haggleAskingPrice(price: Double, name: String) = transformation[HaggleAskingPriceRequest, Nothing, HaggleAskingPriceOutput, Nothing, Nothing](self.haggleAskingPrice(price, name))
-    def getColaAmount() = transformation[Unit, Nothing, GetColaAmountOutput, Nothing, Nothing](self.getColaAmount())
+    def buyCola(amount: Int, bankAccountName: String) = transformation[BuyColaInput, Nothing, BuyColaOutput, Nothing, Nothing](self.buyCola(amount, bankAccountName))
+    def getColaMixInfo() = transformation[Unit, Nothing, GetColaMixInfoOutput, Nothing, Nothing](self.getColaMixInfo())
     def deliverCola(amount: Int) = transformation[DeliverColaInput, Nothing, DeliverColaOutput, Nothing, Nothing](self.deliverCola(amount))
   }
 }
@@ -39,8 +37,7 @@ object ColaMixAPIServiceGen extends Service[ColaMixAPIServiceGen, ColaMixAPIServ
 
   val endpoints: List[Endpoint[ColaMixAPIServiceOperation, _, _, _, _, _]] = List(
     BuyCola,
-    HaggleAskingPrice,
-    GetColaAmount,
+    GetColaMixInfo,
     DeliverCola,
   )
 
@@ -48,15 +45,13 @@ object ColaMixAPIServiceGen extends Service[ColaMixAPIServiceGen, ColaMixAPIServ
 
   def endpoint[I, E, O, SI, SO](op : ColaMixAPIServiceOperation[I, E, O, SI, SO]) = op match {
     case BuyCola(input) => (input, BuyCola)
-    case HaggleAskingPrice(input) => (input, HaggleAskingPrice)
-    case GetColaAmount() => ((), GetColaAmount)
+    case GetColaMixInfo() => ((), GetColaMixInfo)
     case DeliverCola(input) => (input, DeliverCola)
   }
 
   object reified extends ColaMixAPIServiceGen[ColaMixAPIServiceOperation] {
-    def buyCola(amount: Int) = BuyCola(BuyColaInput(amount))
-    def haggleAskingPrice(price: Double, name: String) = HaggleAskingPrice(HaggleAskingPriceRequest(price, name))
-    def getColaAmount() = GetColaAmount()
+    def buyCola(amount: Int, bankAccountName: String) = BuyCola(BuyColaInput(amount, bankAccountName))
+    def getColaMixInfo() = GetColaMixInfo()
     def deliverCola(amount: Int) = DeliverCola(DeliverColaInput(amount))
   }
 
@@ -66,9 +61,8 @@ object ColaMixAPIServiceGen extends Service[ColaMixAPIServiceGen, ColaMixAPIServ
 
   def asTransformation[P[_, _, _, _, _]](impl : ColaMixAPIServiceGen[P]): Transformation[ColaMixAPIServiceOperation, P] = new Transformation[ColaMixAPIServiceOperation, P] {
     def apply[I, E, O, SI, SO](op : ColaMixAPIServiceOperation[I, E, O, SI, SO]) : P[I, E, O, SI, SO] = op match  {
-      case BuyCola(BuyColaInput(amount)) => impl.buyCola(amount)
-      case HaggleAskingPrice(HaggleAskingPriceRequest(price, name)) => impl.haggleAskingPrice(price, name)
-      case GetColaAmount() => impl.getColaAmount()
+      case BuyCola(BuyColaInput(amount, bankAccountName)) => impl.buyCola(amount, bankAccountName)
+      case GetColaMixInfo() => impl.getColaMixInfo()
       case DeliverCola(DeliverColaInput(amount)) => impl.deliverCola(amount)
     }
   }
@@ -84,30 +78,18 @@ object ColaMixAPIServiceGen extends Service[ColaMixAPIServiceGen, ColaMixAPIServ
     )
     def wrap(input: BuyColaInput) = BuyCola(input)
   }
-  case class HaggleAskingPrice(input: HaggleAskingPriceRequest) extends ColaMixAPIServiceOperation[HaggleAskingPriceRequest, Nothing, HaggleAskingPriceOutput, Nothing, Nothing]
-  object HaggleAskingPrice extends Endpoint[ColaMixAPIServiceOperation, HaggleAskingPriceRequest, Nothing, HaggleAskingPriceOutput, Nothing, Nothing] {
-    val id: ShapeId = ShapeId("playSmithy", "HaggleAskingPrice")
-    val input: Schema[HaggleAskingPriceRequest] = HaggleAskingPriceRequest.schema.addHints(smithy4s.internals.InputOutput.Input.widen)
-    val output: Schema[HaggleAskingPriceOutput] = HaggleAskingPriceOutput.schema.addHints(smithy4s.internals.InputOutput.Output.widen)
-    val streamedInput : StreamingSchema[Nothing] = StreamingSchema.nothing
-    val streamedOutput : StreamingSchema[Nothing] = StreamingSchema.nothing
-    val hints : Hints = Hints(
-      smithy.api.Http(method = smithy.api.NonEmptyString("POST"), uri = smithy.api.NonEmptyString("/haggle"), code = 200),
-    )
-    def wrap(input: HaggleAskingPriceRequest) = HaggleAskingPrice(input)
-  }
-  case class GetColaAmount() extends ColaMixAPIServiceOperation[Unit, Nothing, GetColaAmountOutput, Nothing, Nothing]
-  object GetColaAmount extends Endpoint[ColaMixAPIServiceOperation, Unit, Nothing, GetColaAmountOutput, Nothing, Nothing] {
-    val id: ShapeId = ShapeId("playSmithy", "GetColaAmount")
+  case class GetColaMixInfo() extends ColaMixAPIServiceOperation[Unit, Nothing, GetColaMixInfoOutput, Nothing, Nothing]
+  object GetColaMixInfo extends Endpoint[ColaMixAPIServiceOperation, Unit, Nothing, GetColaMixInfoOutput, Nothing, Nothing] {
+    val id: ShapeId = ShapeId("playSmithy", "GetColaMixInfo")
     val input: Schema[Unit] = unit.addHints(smithy4s.internals.InputOutput.Input.widen)
-    val output: Schema[GetColaAmountOutput] = GetColaAmountOutput.schema.addHints(smithy4s.internals.InputOutput.Output.widen)
+    val output: Schema[GetColaMixInfoOutput] = GetColaMixInfoOutput.schema.addHints(smithy4s.internals.InputOutput.Output.widen)
     val streamedInput : StreamingSchema[Nothing] = StreamingSchema.nothing
     val streamedOutput : StreamingSchema[Nothing] = StreamingSchema.nothing
     val hints : Hints = Hints(
       smithy.api.Http(method = smithy.api.NonEmptyString("GET"), uri = smithy.api.NonEmptyString("/storage"), code = 201),
       smithy.api.Readonly(),
     )
-    def wrap(input: Unit) = GetColaAmount()
+    def wrap(input: Unit) = GetColaMixInfo()
   }
   case class DeliverCola(input: DeliverColaInput) extends ColaMixAPIServiceOperation[DeliverColaInput, Nothing, DeliverColaOutput, Nothing, Nothing]
   object DeliverCola extends Endpoint[ColaMixAPIServiceOperation, DeliverColaInput, Nothing, DeliverColaOutput, Nothing, Nothing] {
@@ -118,6 +100,7 @@ object ColaMixAPIServiceGen extends Service[ColaMixAPIServiceGen, ColaMixAPIServ
     val streamedOutput : StreamingSchema[Nothing] = StreamingSchema.nothing
     val hints : Hints = Hints(
       smithy.api.Http(method = smithy.api.NonEmptyString("POST"), uri = smithy.api.NonEmptyString("/storage"), code = 201),
+      smithy.api.Auth(Set()),
     )
     def wrap(input: DeliverColaInput) = DeliverCola(input)
   }
