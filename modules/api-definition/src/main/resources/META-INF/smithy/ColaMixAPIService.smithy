@@ -4,6 +4,7 @@ namespace playSmithy
 
 use smithy4s.api#simpleRestJson
 
+@httpBearerAuth
 @simpleRestJson
 service ColaMixAPIService {
     version: "1.0.0",
@@ -11,6 +12,8 @@ service ColaMixAPIService {
 }
 
 
+
+@auth([])
 @http(method: "POST", uri: "/buy", code: 200)
 operation BuyCola {
     input := {
@@ -31,6 +34,8 @@ operation BuyCola {
     }
 }
 
+
+@auth([])
 @readonly
 @http(method: "GET", uri: "/storage", code: 201)
 operation GetColaMixInfo {
@@ -42,7 +47,7 @@ operation GetColaMixInfo {
     }
 }
 
-@auth([])
+@auth([httpBearerAuth])
 @http(method: "POST", uri: "/storage", code: 201)
 operation DeliverCola {
     input := {

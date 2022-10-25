@@ -37,7 +37,7 @@ class BaseController(implicit ec: ExecutionContext, app: Application)
      override def AuthAction: Kleisli[ApplicationRouteResult, ContextWithHeaders, ContextWithHeaders] = Kleisli {
        context =>
          println(context.httpHeaders.rc)
-         EitherT.leftT[Future,ContextWithHeaders](Forbidden())
+         EitherT.rightT[Future, ResultStatus](context)
      }
 
    }

@@ -5,13 +5,14 @@ namespace playSmithy
 use smithy4s.api#simpleRestJson
 
 @simpleRestJson
+@httpBearerAuth
 service BankAPIService {
     version: "1.0.0",
     operations: [CreateAccount, DeleteAccount, Transfer, GetAllAccounts]
 }
 
 
-@auth([])
+@auth([httpBearerAuth])
 @readonly
 @http(method: "GET", uri: "/account", code: 200)
 operation GetAllAccounts {
@@ -26,6 +27,7 @@ list CreateDeleteAccountOutputList {
     member: CreateDeleteAccountOutput
 }
 
+@auth([])
 @http(method: "POST", uri: "/account", code: 200)
 operation CreateAccount {
     input := {
@@ -38,6 +40,8 @@ operation CreateAccount {
     output: CreateDeleteAccountOutput
 }
 
+
+@auth([])
 @idempotent
 @http(method: "DELETE", uri: "/account/{name}", code: 200)
 operation DeleteAccount {
@@ -49,6 +53,8 @@ operation DeleteAccount {
     output: CreateDeleteAccountOutput
 }
 
+
+@auth([])
 @http(method: "POST", uri: "/account/transfer", code: 201)
 operation Transfer {
     input := {

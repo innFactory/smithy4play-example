@@ -4,16 +4,13 @@ import cats.data.{EitherT, Validated}
 import de.innfactory.example.bank.domain.interfaces.BankService
 import de.innfactory.play.controller.ResultStatus
 import de.innfactory.play.results.errors.Errors.BadRequest
-import playSmithy.{
-  CreateDeleteAccountOutput,
-  GetAllAccountsOutput,
-  TransferOutput
-}
+import playSmithy.{CreateDeleteAccountOutput, GetAllAccountsOutput, TransferOutput}
 import de.innfactory.play.results.errors.Errors.NotFound
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class BankServiceImpl @Inject()()(implicit ec: ExecutionContext)
     extends BankService {
 
@@ -56,7 +53,7 @@ class BankServiceImpl @Inject()()(implicit ec: ExecutionContext)
       _ = database += (name -> (oldAccount.balance + amount))
       newAccount <- toCreateAccountOutput(name)
       message = if (newAccount.balance < 0)
-        Some("You now have negative balance!")
+        Some("You have negative balance!")
       else None
     } yield TransferOutput(newAccount.balance, newAccount.name, message)
 
@@ -65,7 +62,9 @@ class BankServiceImpl @Inject()()(implicit ec: ExecutionContext)
   ): EitherT[Future, ResultStatus, CreateDeleteAccountOutput] =
     for {
       value <- EitherT.fromOptionF[Future, ResultStatus, Double](
-        Future(database.get(key)),
+        Future(
+          {println(database)
+            database.get(key)}),
         NotFound("No Bank Account for this User")
       )
     } yield CreateDeleteAccountOutput(value, key)
