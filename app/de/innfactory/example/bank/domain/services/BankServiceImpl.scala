@@ -4,7 +4,11 @@ import cats.data.{EitherT, Validated}
 import de.innfactory.example.bank.domain.interfaces.BankService
 import de.innfactory.play.controller.ResultStatus
 import de.innfactory.play.results.errors.Errors.BadRequest
-import playSmithy.{CreateDeleteAccountOutput, GetAllAccountsOutput, TransferOutput}
+import playSmithy.{
+  CreateDeleteAccountOutput,
+  GetAllAccountsOutput,
+  TransferOutput
+}
 import de.innfactory.play.results.errors.Errors.NotFound
 
 import javax.inject.{Inject, Singleton}
@@ -62,16 +66,16 @@ class BankServiceImpl @Inject()()(implicit ec: ExecutionContext)
   ): EitherT[Future, ResultStatus, CreateDeleteAccountOutput] =
     for {
       value <- EitherT.fromOptionF[Future, ResultStatus, Double](
-        Future(
-          {println(database)
-            database.get(key)}),
+        Future(database.get(key)),
         NotFound("No Bank Account for this User")
       )
     } yield CreateDeleteAccountOutput(value, key)
 
   override def getAllAccounts()
     : EitherT[Future, ResultStatus, GetAllAccountsOutput] =
-    EitherT.rightT[Future, ResultStatus](GetAllAccountsOutput(
-            database.map(acc => CreateDeleteAccountOutput(acc._2, acc._1) ).toList)
+    EitherT.rightT[Future, ResultStatus](
+      GetAllAccountsOutput(
+        database.map(acc => CreateDeleteAccountOutput(acc._2, acc._1)).toList
+      )
     )
 }

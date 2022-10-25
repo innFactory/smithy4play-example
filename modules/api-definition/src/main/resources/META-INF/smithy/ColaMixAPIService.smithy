@@ -12,7 +12,6 @@ service ColaMixAPIService {
 }
 
 
-
 @auth([])
 @http(method: "POST", uri: "/buy", code: 200)
 operation BuyCola {

@@ -1,7 +1,7 @@
 package de.innfactory.example.application.controller
 
 import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
-import cats.data.{EitherT, Kleisli, RWS}
+import cats.data.{EitherT, Kleisli, RWS, Validated}
 import de.innfactory.play.controller.{ErrorResult, ResultStatus}
 import de.innfactory.play.results.errors.Errors.Forbidden
 import de.innfactory.play.smithy4play.{AbstractBaseController, ContextWithHeaders, HttpHeaders, ImplicitLogContext}

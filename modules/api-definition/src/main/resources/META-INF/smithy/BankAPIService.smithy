@@ -8,7 +8,7 @@ use smithy4s.api#simpleRestJson
 @httpBearerAuth
 service BankAPIService {
     version: "1.0.0",
-    operations: [CreateAccount, DeleteAccount, Transfer, GetAllAccounts]
+    operations: [CreateAccount DeleteAccount Transfer GetAllAccounts]
 }
 
 
