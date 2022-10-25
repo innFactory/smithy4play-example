@@ -6,6 +6,6 @@ lazy val apiDefinition = (project in file("."))
     name := "api-definition",
     scalaVersion := Dependencies.scalaVersion,
     version := releaseVersion,
-    GithubConfig.settings,
-    libraryDependencies += "com.disneystreaming.smithy4s" % "smithy4s-protocol" % "0.16.2"
+    autoScalaLibrary := false,
+    GithubConfig.settings
   )

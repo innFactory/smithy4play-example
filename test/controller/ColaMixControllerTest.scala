@@ -16,7 +16,7 @@ class ColaMixControllerTest extends PlaySpec with BaseOneAppPerSuite with TestAp
 
     "get ColaServiceInformations" in {
       val result = client.getColaMixInfo().run(None).awaitRight
-      println(result)
+
       result.statusCode mustBe result.expectedStatusCode
     }
 
