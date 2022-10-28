@@ -3,7 +3,7 @@ import sbt._
 
 object Dependencies {
 
-  val scalaVersion = "2.13.8"
+  val scalaVersion = "2.13.10"
 
   // innFactory Utils
   val scalaUtil = "de.innfactory.scala-utils" %% "scala-utils" % "2.0.1"
