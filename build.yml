@@ -1,0 +1,22 @@
+name: Scala Build and Test CI
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run compile
+        run: sbt compile
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run tests
+        run: sbt test
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Formatting
+        run: sbt scalafmtSbtCheck scalafmtCheck
