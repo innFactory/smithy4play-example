@@ -10,7 +10,7 @@ object Dependencies {
   val smithy4play = "de.innfactory" %% "smithy4play" % "0.3.2"
 
   // Test
-  val scalatestPlus = "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
+  val scalatestPlus = "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test
 
   lazy val list = Seq(
     scalaUtil,
